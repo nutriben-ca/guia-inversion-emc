@@ -429,6 +429,7 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
     <button class="plan-btn" onclick="renderPlan()">🔍 Ver potencial</button>
     <button class="plan-export-btn" onclick="exportPlan()">⬇ Excel</button>
   </div>
+  <p style="font-size:11px;color:#6b7a96;margin:8px 0 4px;line-height:1.5"><b>IOC (Índice de Oportunidad de Conversión)</b> = Rx de la marca × factor Analyzer (1 = 1.0 · 2 = 0.85 · 3 = 0.70 · 4 = 0.55 · 5 = 0.40 · sin Analyzer = 0.80) × factor de patrón (virgen 1.0 → lealtad fraccionada 0.25) ÷ (1 + lecheras de la competencia que lo patrocinan). <b>Tipo</b>: Ancla ≥40% de su Rx total es esta marca · Objetivo 10–39% · Virgen &lt;10%.</p>
   <div class="plan-summary" id="plan-summary"></div>
   <div id="plan-results"></div>
 </div>
@@ -734,9 +735,14 @@ var TIER_ORDER={'TIER 1':1,'TIER 2':2,'TIER 3':3,'TIER 4':4};
 function calcIOC(r,marca){
   var rx=r[marca]||0;
   if(!rx)return 0;
-  var af=r.anl?ANL_F[r.anl]||0.60:0.60;
+  var af=r.anl?ANL_F[r.anl]||0.80:0.80;
   var pf=PATRON_F[r.patron]||0.60;
-  return Math.round(rx*af*pf*100)/100;
+  return Math.round(rx*af*pf/(1+nLecheras(r))*100)/100;
+}
+function nLecheras(r){
+  var m=String(r.marcas||'').trim();
+  if(!m||m==='—'||m==='-')return 0;
+  return m.split(',').filter(function(x){return x.trim();}).length;
 }
 function getTipo(r,marca){
   var rx_cat=r[marca]||0;
