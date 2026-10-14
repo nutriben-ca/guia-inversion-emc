@@ -120,6 +120,17 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
 .plan-controls{background:#fff;border-radius:12px;padding:14px 18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,51,161,.07);display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;}
 .plan-ctrl-group{display:flex;flex-direction:column;gap:4px;}
 .plan-ctrl-group label{font-size:10px;font-weight:700;color:#6b7a96;text-transform:uppercase;letter-spacing:.08em;}
+.msel{position:relative;}
+.msel-btn{font-family:inherit;font-size:12px;font-weight:600;color:#0033A1;background:#f0f5ff;border:1.5px solid #b0c4f8;border-radius:20px;padding:5px 30px 5px 16px;cursor:pointer;min-width:150px;max-width:230px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;}
+.msel-btn:after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;}
+.msel.open .msel-btn{border-color:#0033A1;}
+.msel-pop{display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:50;background:#fff;border:1px solid #b0c4f8;border-radius:10px;box-shadow:0 6px 20px rgba(0,51,161,.15);padding:6px;min-width:220px;max-height:300px;overflow:auto;}
+.msel.open .msel-pop{display:block;}
+.msel-pop label{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:12px;color:#1c2b4a;border-radius:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;}
+.msel-pop label:hover{background:#f0f5ff;}
+.msel-act{display:flex;gap:6px;padding:4px 6px 6px;border-bottom:1px solid #eef2fa;margin-bottom:4px;}
+.msel-act button{font-family:inherit;font-size:10.5px;color:#0033A1;background:none;border:none;cursor:pointer;padding:2px 4px;text-decoration:underline;}
+.plan-mix{font-size:9.5px;color:#6b7a96;font-weight:500;display:block;}
 .plan-sel{font-family:inherit;font-size:12px;font-weight:600;color:#0033A1;background:#f0f5ff;border:1.5px solid #b0c4f8;border-radius:20px;padding:5px 16px;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;min-width:150px;}
 .plan-sel:focus{border-color:#0033A1;}
 .plan-btn{font-family:inherit;font-size:12px;font-weight:700;color:#fff;background:#0033A1;border:none;border-radius:20px;padding:6px 18px;cursor:pointer;transition:background .15s;}
@@ -388,13 +399,7 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
   <div class="plan-controls">
     <div class="plan-ctrl-group">
       <label>Marca / Categoría</label>
-      <select class="plan-sel" id="plan-marca" onchange="planPopulateMR();planPopulateCiudad();">
-        <option value="e1">Etapa 1 (E1)</option>
-        <option value="e3">Etapa 3 (E3)</option>
-        <option value="hidext">Hidrolizada Ext. (HE)</option>
-        <option value="hidparc">Hidrolizada Parc. (HP)</option>
-        <option value="sl">Sin Lactosa (SL)</option>
-      </select>
+      <div class="msel" id="plan-marca" data-ph="Todas las marcas"></div>
     </div>
     <div class="plan-ctrl-group">
       <label>País</label>
@@ -406,9 +411,11 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
     </div>
     <div class="plan-ctrl-group">
       <label>MR</label>
-      <select class="plan-sel" id="plan-mr" onchange="planPopulateCiudad();">
-        <option value="">Todos</option>
-      </select>
+      <div class="msel" id="plan-mr" data-ph="Todos"></div>
+    </div>
+    <div class="plan-ctrl-group">
+      <label>Especialidad</label>
+      <div class="msel" id="plan-esp" data-ph="Todas"></div>
     </div>
     <div class="plan-ctrl-group">
       <label>Ciudad</label>
@@ -427,9 +434,10 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
       </select>
     </div>
     <button class="plan-btn" onclick="renderPlan()">🔍 Ver potencial</button>
+    <button class="plan-export-btn" onclick="planAddGroup()">＋ Agregar resultado al grupo</button>
     <button class="plan-export-btn" onclick="exportPlan()">⬇ Excel</button>
   </div>
-  <p style="font-size:11px;color:#6b7a96;margin:8px 0 4px;line-height:1.5"><b>IOC (Índice de Oportunidad de Conversión)</b> = Rx de la marca × factor Analyzer (1 = 1.0 · 2 = 0.85 · 3 = 0.70 · 4 = 0.55 · 5 = 0.40 · sin Analyzer = 0.80) × factor de patrón (virgen 1.0 → lealtad fraccionada 0.25) ÷ (1 + lecheras de la competencia que lo patrocinan). <b>Tipo</b>: Ancla ≥40% de su Rx total es esta marca · Objetivo 10–39% · Virgen &lt;10%.</p>
+  <p style="font-size:11px;color:#6b7a96;margin:8px 0 4px;line-height:1.5">Con varias marcas seleccionadas se suman sus Rx. <b>IOC (Índice de Oportunidad de Conversión)</b> = Rx de las marcas × factor Analyzer (1 = 1.0 · 2 = 0.85 · 3 = 0.70 · 4 = 0.55 · 5 = 0.40 · sin Analyzer = 0.80) × factor de patrón (virgen 1.0 → lealtad fraccionada 0.25) ÷ (1 + lecheras de la competencia que lo patrocinan). <b>Tipo</b>: Ancla ≥40% de su Rx total son estas marcas · Objetivo 10–39% · Virgen &lt;10%.</p>
   <div class="plan-summary" id="plan-summary"></div>
   <div id="plan-results"></div>
 </div>
@@ -732,8 +740,9 @@ var PATRON_F={'Terreno virgen':1.0,'Abandono temprano':0.85,'Abandono reciente':
 var ANL_F={1:1.0,2:0.85,3:0.70,4:0.55,5:0.40};
 var MARCA_LABEL={'e1':'Etapa 1','e3':'Etapa 3','hidext':'Hidrolizada Ext.','hidparc':'Hidrolizada Parc.','sl':'Sin Lactosa'};
 var TIER_ORDER={'TIER 1':1,'TIER 2':2,'TIER 3':3,'TIER 4':4};
-function calcIOC(r,marca){
-  var rx=r[marca]||0;
+function mSum(r,ms){if(typeof ms==='string')ms=[ms];return ms.reduce(function(t,m){return t+(r[m]||0);},0);}
+function calcIOC(r,ms){
+  var rx=mSum(r,ms);
   if(!rx)return 0;
   var af=r.anl?ANL_F[r.anl]||0.80:0.80;
   var pf=PATRON_F[r.patron]||0.60;
@@ -744,147 +753,142 @@ function nLecheras(r){
   if(!m||m==='—'||m==='-')return 0;
   return m.split(',').filter(function(x){return x.trim();}).length;
 }
-function getTipo(r,marca){
-  var rx_cat=r[marca]||0;
-  var rx_tot=r.rx||1;
-  var share=rx_cat/rx_tot;
+function getTipo(r,ms){
+  var share=mSum(r,ms)/(r.rx||1);
   if(share>=0.40)return'ancla';
   if(share>=0.10)return'objetivo';
   return'virgen';
 }
+// ── Selector múltiple ──
+var MARCA_SHORT={e1:'E1',e3:'E3',hidext:'HE',hidparc:'HP',sl:'SL'};
+var MSEL={};
+function mselEsc(t){return String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function mselBuild(id,items,keep,onchange){
+  var el=document.getElementById(id);if(!el)return;
+  var prev=MSEL[id]?MSEL[id].sel:{};
+  var sel={};items.forEach(function(it){if(keep&&prev[it.v])sel[it.v]=1;});
+  MSEL[id]={items:items,sel:sel,onchange:onchange};
+  var h='<button type="button" class="msel-btn" onclick="mselToggle(\''+id+'\',event)"></button><div class="msel-pop" onclick="event.stopPropagation()">';
+  h+='<div class="msel-act"><button type="button" onclick="mselAll(\''+id+'\',1)">Todos</button><button type="button" onclick="mselAll(\''+id+'\',0)">Ninguno</button></div>';
+  items.forEach(function(it,i){h+='<label><input type="checkbox" data-v="'+mselEsc(it.v)+'"'+(sel[it.v]?' checked':'')+' onchange="mselPick(\''+id+'\',this)"> '+mselEsc(it.t)+'</label>';});
+  el.innerHTML=h+'</div>';mselLabel(id);
+}
+function mselLabel(id){
+  var m=MSEL[id],el=document.getElementById(id),ks=Object.keys(m.sel);
+  var ph=el.getAttribute('data-ph')||'Todos',txt;
+  if(!ks.length||ks.length===m.items.length)txt=ph;
+  else if(ks.length<=2)txt=m.items.filter(function(it){return m.sel[it.v];}).map(function(it){return it.s||it.t;}).join(' + ');
+  else txt=ks.length+' seleccionados';
+  el.querySelector('.msel-btn').textContent=txt;
+}
+function mselVals(id){var m=MSEL[id];if(!m)return[];var ks=Object.keys(m.sel);return ks.length?ks:m.items.map(function(it){return it.v;});}
+function mselIsAll(id){var m=MSEL[id];var n=Object.keys(m.sel).length;return !n||n===m.items.length;}
+function mselPick(id,cb){var m=MSEL[id];var v=cb.getAttribute('data-v');if(cb.checked)m.sel[v]=1;else delete m.sel[v];mselLabel(id);if(m.onchange)m.onchange();}
+function mselAll(id,on){var m=MSEL[id];m.sel={};if(on)m.items.forEach(function(it){m.sel[it.v]=1;});document.querySelectorAll('#'+id+' input').forEach(function(c){c.checked=!!on;});mselLabel(id);if(m.onchange)m.onchange();}
+function mselToggle(id,e){e.stopPropagation();var el=document.getElementById(id),o=el.classList.contains('open');document.querySelectorAll('.msel.open').forEach(function(x){x.classList.remove('open');});if(!o)el.classList.add('open');}
+document.addEventListener('click',function(){document.querySelectorAll('.msel.open').forEach(function(x){x.classList.remove('open');});});
+function planInitMarca(){
+  if(MSEL['plan-marca'])return;
+  mselBuild('plan-marca',['e1','e3','hidext','hidparc','sl'].map(function(k){return{v:k,t:MARCA_LABEL[k]+' ('+MARCA_SHORT[k]+')',s:MARCA_SHORT[k]};}),false,function(){planPopulateMR();planPopulateCiudad();});
+  MSEL['plan-marca'].sel={hidparc:1};document.querySelector('#plan-marca input[data-v="hidparc"]').checked=true;mselLabel('plan-marca');
+}
+function planMarcas(){return mselVals('plan-marca');}
+function planMarcaLbl(ms){return ms.length===1?MARCA_LABEL[ms[0]]:ms.map(function(m){return MARCA_SHORT[m];}).join('+');}
 function planPopulateMR(){
+  planInitMarca();
   var pais=document.getElementById('plan-pais').value;
-  var mrs={};
-  RAW.forEach(function(r){if(!pais||r.pais===pais)mrs[r.mr]=true;});
-  var sel=document.getElementById('plan-mr');
-  var opts='<option value="">Todos</option>';
-  Object.keys(mrs).sort().forEach(function(m){opts+='<option value="'+m+'">'+m+'</option>';});
-  sel.innerHTML=opts;
+  var mrs={},esps={};
+  RAW.forEach(function(r){if(!pais||r.pais===pais){mrs[r.mr]=1;esps[r.esp]=1;}});
+  mselBuild('plan-mr',Object.keys(mrs).sort().map(function(m){return{v:m,t:m};}),true,planPopulateCiudad);
+  mselBuild('plan-esp',Object.keys(esps).sort().map(function(m){return{v:m,t:m};}),true,planPopulateCiudad);
+}
+function planBase(skipCiudad){
+  var ms=planMarcas(),pais=document.getElementById('plan-pais').value;
+  var mrAll=mselIsAll('plan-mr'),mrs={};mselVals('plan-mr').forEach(function(m){mrs[m]=1;});
+  var espAll=mselIsAll('plan-esp'),esps={};mselVals('plan-esp').forEach(function(m){esps[m]=1;});
+  var ciudad=skipCiudad?'':document.getElementById('plan-ciudad').value;
+  var minrx=parseInt(document.getElementById('plan-minrx').value)||0;
+  return RAW.filter(function(r){
+    if(pais&&r.pais!==pais)return false;
+    if(!mrAll&&!mrs[r.mr])return false;
+    if(!espAll&&!esps[r.esp])return false;
+    if(ciudad&&r.ciudad!==ciudad)return false;
+    var rx=mSum(r,ms);
+    return rx>0&&rx>=minrx;
+  });
 }
 function planPopulateCiudad(){
-  var pais=document.getElementById('plan-pais').value;
-  var mr=document.getElementById('plan-mr').value;
-  var marca=document.getElementById('plan-marca').value;
-  var cities={};
-  RAW.forEach(function(r){
-    if(pais&&r.pais!==pais)return;
-    if(mr&&r.mr!==mr)return;
-    if(marca&&!(r[marca]>0))return;
-    if(r.ciudad)cities[r.ciudad]=true;
-  });
-  var sel=document.getElementById('plan-ciudad');
+  var sel=document.getElementById('plan-ciudad'),cur=sel.value,cities={};
+  planBase(true).forEach(function(r){if(r.ciudad)cities[r.ciudad]=1;});
   var opts='<option value="">Todas las ciudades</option>';
-  Object.keys(cities).sort().forEach(function(c){opts+='<option value="'+c+'">'+c+'</option>';});
+  Object.keys(cities).sort().forEach(function(c){opts+='<option value="'+mselEsc(c)+'"'+(c===cur?' selected':'')+'>'+mselEsc(c)+'</option>';});
   sel.innerHTML=opts;
 }
+function planRows(){
+  var ms=planMarcas();
+  return planBase(false).map(function(r){return{r:r,rx:mSum(r,ms),ioc:calcIOC(r,ms),tipo:getTipo(r,ms)};})
+    .sort(function(a,b){if(b.ioc!==a.ioc)return b.ioc-a.ioc;return(TIER_ORDER[a.r.tier]||9)-(TIER_ORDER[b.r.tier]||9);});
+}
+function planAddGroup(){
+  var rows=planRows(),n=0;
+  rows.forEach(function(x){var k=rkey(x.r);if(!GRP[k]){GRP[k]=1;n++;}});
+  saveGrp();updGrpBadge();
+  gToast(n+' médico'+(n===1?'':'s')+' agregado'+(n===1?'':'s')+' · el grupo tiene '+Object.keys(GRP).length);
+}
 function renderPlan(){
-  var marca=document.getElementById('plan-marca').value;
-  var pais=document.getElementById('plan-pais').value;
-  var mr=document.getElementById('plan-mr').value;
-  var ciudad=document.getElementById('plan-ciudad').value;
-  var minrx=parseInt(document.getElementById('plan-minrx').value)||0;
-  var filtered=RAW.filter(function(r){
-    if(pais&&r.pais!==pais)return false;
-    if(mr&&r.mr!==mr)return false;
-    if(ciudad&&r.ciudad!==ciudad)return false;
-    if((r[marca]||0)<minrx)return false;
-    return(r[marca]||0)>0;
-  });
-  // Calc IOC and sort
-  var rows=filtered.map(function(r){
-    return{r:r,ioc:calcIOC(r,marca),tipo:getTipo(r,marca)};
-  });
-  rows.sort(function(a,b){
-    if(b.ioc!==a.ioc)return b.ioc-a.ioc;
-    return(TIER_ORDER[a.r.tier]||9)-(TIER_ORDER[b.r.tier]||9);
-  });
+  var ms=planMarcas(),lbl=planMarcaLbl(ms),multi=ms.length>1;
+  var rows=planRows();
   var maxIOC=rows.length?rows[0].ioc:1;
-  // KPI summary
   var nAncla=rows.filter(function(x){return x.tipo==='ancla';}).length;
   var nObj=rows.filter(function(x){return x.tipo==='objetivo';}).length;
   var nVirgen=rows.filter(function(x){return x.tipo==='virgen';}).length;
-  var totalRx=rows.reduce(function(s,x){return s+(x.r[marca]||0);},0);
+  var totalRx=rows.reduce(function(s,x){return s+x.rx;},0);
   document.getElementById('plan-summary').innerHTML=
     '<div class="plan-kpi"><span class="num">'+rows.length+'</span><span class="lbl">Médicos</span></div>'
-   +'<div class="plan-kpi"><span class="num">'+totalRx+'</span><span class="lbl">Rx/sem '+MARCA_LABEL[marca]+'</span></div>'
+   +'<div class="plan-kpi"><span class="num">'+totalRx+'</span><span class="lbl">Rx/sem '+lbl+'</span></div>'
    +'<div class="plan-kpi" style="border-left:3px solid #1a7f3c"><span class="num" style="color:#1a7f3c">'+nAncla+'</span><span class="lbl">Ancla (≥40%)</span></div>'
    +'<div class="plan-kpi" style="border-left:3px solid #0033A1"><span class="num">'+nObj+'</span><span class="lbl">Objetivo (10-40%)</span></div>'
    +'<div class="plan-kpi" style="border-left:3px solid #6b7a96"><span class="num" style="color:#6b7a96">'+nVirgen+'</span><span class="lbl">Virgen (<10%)</span></div>';
-  // Group by ciudad
   var byCity={};
-  rows.forEach(function(x){
-    var c=x.r.ciudad||'Sin ciudad asignada';
-    if(!byCity[c])byCity[c]=[];
-    byCity[c].push(x);
-  });
-  // Sort cities by total IOC descending
+  rows.forEach(function(x){var c=x.r.ciudad||'Sin ciudad asignada';(byCity[c]=byCity[c]||[]).push(x);});
   var cityList=Object.keys(byCity).sort(function(a,b){
-    var sa=byCity[a].reduce(function(s,x){return s+x.ioc;},0);
-    var sb=byCity[b].reduce(function(s,x){return s+x.ioc;},0);
-    return sb-sa;
-  });
+    var sa=byCity[a].reduce(function(s,x){return s+x.ioc;},0),sb=byCity[b].reduce(function(s,x){return s+x.ioc;},0);return sb-sa;});
   var h='';
-  if(!rows.length){h='<div class="plan-empty">No hay médicos con prescripción de '+MARCA_LABEL[marca]+' con los filtros seleccionados.</div>';}
+  if(!rows.length){h='<div class="plan-empty">No hay médicos con prescripción de '+lbl+' con los filtros seleccionados.</div>';}
   cityList.forEach(function(city){
     var medicos=byCity[city];
-    var cityRx=medicos.reduce(function(s,x){return s+(x.r[marca]||0);},0);
-    h+='<div class="city-group">';
-    h+='<div class="city-group-hdr">';
-    h+='<span class="city-name">📍 '+city+'</span>';
-    h+='<span class="city-count">'+medicos.length+' médicos &nbsp;·&nbsp; '+cityRx+' Rx/sem total</span>';
-    h+='</div>';
-    h+='<table class="plan-table">';
-    h+='<thead><tr>';
-    h+='<th>#</th><th>Médico</th><th>MR</th><th>Esp.</th><th>Tier</th>';
-    h+='<th>Rx '+MARCA_LABEL[marca]+'</th><th>Rx Total</th><th>Tipo</th><th>IOC</th>';
-    h+='</tr></thead><tbody>';
+    var cityRx=medicos.reduce(function(s,x){return s+x.rx;},0);
+    h+='<div class="city-group"><div class="city-group-hdr"><span class="city-name">📍 '+city+'</span>';
+    h+='<span class="city-count">'+medicos.length+' médicos &nbsp;·&nbsp; '+cityRx+' Rx/sem '+lbl+'</span></div>';
+    h+='<table class="plan-table"><thead><tr><th>#</th><th>Médico</th><th>MR</th><th>Esp.</th><th>Tier</th>';
+    h+='<th>Rx '+lbl+'</th><th>Rx Total</th><th>Tipo</th><th>IOC</th></tr></thead><tbody>';
     medicos.forEach(function(x,i){
-      var r=x.r;
-      var pct=maxIOC>0?Math.round(x.ioc/maxIOC*100):0;
-      var tipoCls='badge-'+x.tipo;
+      var r=x.r,pct=maxIOC>0?Math.round(x.ioc/maxIOC*100):0;
       var tipoLbl=x.tipo==='ancla'?'Ancla':x.tipo==='objetivo'?'Objetivo':'Virgen';
       var tierColor={'TIER 1':'#1a7f3c','TIER 2':'#0033A1','TIER 3':'#FAA334','TIER 4':'#6b7a96'}[r.tier]||'#999';
-      h+='<tr>';
-      h+='<td style="color:#6b7a96;font-size:10px">'+(i+1)+'</td>';
-      h+='<td style="font-weight:600">'+r.n+'</td>';
-      h+='<td style="color:#6b7a96">'+r.mr+'</td>';
-      h+='<td style="color:#6b7a96">'+r.esp+'</td>';
+      var mix=multi?'<span class="plan-mix">'+ms.filter(function(m){return r[m]>0;}).map(function(m){return MARCA_SHORT[m]+' '+r[m];}).join(' · ')+'</span>':'';
+      h+='<tr><td style="color:#6b7a96;font-size:10px">'+(i+1)+'</td>';
+      h+='<td style="font-weight:600">'+r.n+'</td><td style="color:#6b7a96">'+r.mr+'</td><td style="color:#6b7a96">'+r.esp+'</td>';
       h+='<td><span style="font-size:10px;font-weight:700;color:'+tierColor+'">'+r.tier.replace('TIER ','T')+'</span></td>';
-      h+='<td style="font-weight:700;color:#0033A1">'+(r[marca]||0)+'</td>';
-      h+='<td>'+r.rx+'</td>';
-      h+='<td><span class="badge-tipo '+tipoCls+'">'+tipoLbl+'</span></td>';
-      h+='<td><div class="ioc-bar-wrap"><div class="ioc-bar-track"><div class="ioc-bar-fill" style="width:'+pct+'%"></div></div><span class="ioc-val">'+x.ioc+'</span></div></td>';
-      h+='</tr>';
+      h+='<td style="font-weight:700;color:#0033A1">'+x.rx+mix+'</td><td>'+r.rx+'</td>';
+      h+='<td><span class="badge-tipo badge-'+x.tipo+'">'+tipoLbl+'</span></td>';
+      h+='<td><div class="ioc-bar-wrap"><div class="ioc-bar-track"><div class="ioc-bar-fill" style="width:'+pct+'%"></div></div><span class="ioc-val">'+x.ioc+'</span></div></td></tr>';
     });
     h+='</tbody></table></div>';
   });
   document.getElementById('plan-results').innerHTML=h;
 }
 function exportPlan(){
-  var marca=document.getElementById('plan-marca').value;
-  var pais=document.getElementById('plan-pais').value;
-  var mr=document.getElementById('plan-mr').value;
-  var ciudad=document.getElementById('plan-ciudad').value;
-  var minrx=parseInt(document.getElementById('plan-minrx').value)||0;
-  var filtered=RAW.filter(function(r){
-    if(pais&&r.pais!==pais)return false;
-    if(mr&&r.mr!==mr)return false;
-    if(ciudad&&r.ciudad!==ciudad)return false;
-    if((r[marca]||0)<minrx)return false;
-    return(r[marca]||0)>0;
-  });
-  var rows=filtered.map(function(r){
-    return{r:r,ioc:calcIOC(r,marca),tipo:getTipo(r,marca)};
-  }).sort(function(a,b){return b.ioc-a.ioc;});
-  var h=['Ciudad','Médico','MR','Especialidad','País','Tier','Rx '+MARCA_LABEL[marca],'Rx Total','Tipo','IOC'];
+  var ms=planMarcas(),lbl=planMarcaLbl(ms),rows=planRows();
+  var h=['Ciudad','Médico','MR','Especialidad','País','Tier'].concat(ms.map(function(m){return 'Rx '+MARCA_SHORT[m];}),['Rx '+lbl,'Rx Total','Tipo','IOC']);
   var data=[h].concat(rows.map(function(x){
-    return[x.r.ciudad||'',x.r.n,x.r.mr,x.r.esp,x.r.pais,x.r.tier,x.r[marca]||0,x.r.rx,x.tipo,x.ioc];
+    return[x.r.ciudad||'',x.r.n,x.r.mr,x.r.esp,x.r.pais,x.r.tier].concat(ms.map(function(m){return x.r[m]||0;}),[x.rx,x.r.rx,x.tipo,x.ioc]);
   }));
   var ws=XLSX.utils.aoa_to_sheet(data);
-  ws['!cols']=[{wch:18},{wch:30},{wch:18},{wch:22},{wch:12},{wch:8},{wch:10},{wch:8},{wch:10},{wch:6}];
+  ws['!cols']=h.map(function(c,i){return{wch:i===1?30:i===0||i===2||i===3?20:9};});
   var wb2=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb2,ws,'Plan '+MARCA_LABEL[marca]);
-  XLSX.writeFile(wb2,'Nutriben_Plan_'+MARCA_LABEL[marca].replace(/[^a-zA-Z]/g,'')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  XLSX.utils.book_append_sheet(wb2,ws,('Plan '+lbl).slice(0,31));
+  XLSX.writeFile(wb2,'Nutriben_Plan_'+lbl.replace(/[^a-zA-Z+]/g,'').replace(/\+/g,'-')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 // Init planning dropdowns after DOM ready
 if(document.readyState==='loading'){
