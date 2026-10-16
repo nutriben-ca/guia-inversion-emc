@@ -1016,6 +1016,44 @@ loadGrp();
 ['A','B1','B2','C'].forEach(function(s){populateCitySelect(s,'');});
 render('A');render('B1');render('B2');render('C');
 updGrpBadge();
+
+/* ── Aviso de versión desactualizada ──────────────────────────
+   Descarga la página publicada sin caché y compara su código con
+   el que está corriendo. Si cambió, bloquea la app y pide recargar,
+   para que nadie trabaje ni guarde sobre una copia vieja. */
+(function(){
+  var ULT=0,AVISADO=false;
+  function codigoDe(doc){var s=doc.querySelector('script:not([src])');return s?s.textContent:'';}
+  var LOCAL=codigoDe(document);
+  function aviso(){
+    if(AVISADO)return;AVISADO=true;
+    var d=document.createElement('div');
+    d.setAttribute('role','alertdialog');
+    d.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(10,25,70,.72);display:flex;align-items:center;justify-content:center;padding:16px;font-family:inherit';
+    d.innerHTML='<div style="background:#fff;border-radius:14px;max-width:420px;width:100%;padding:26px 24px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3)">'
+      +'<div style="font-size:30px;margin-bottom:6px">&#8635;</div>'
+      +'<div style="font-weight:700;font-size:17px;color:#0033A1;margin-bottom:8px">Hay una versi&oacute;n nueva</div>'
+      +'<div style="font-size:13.5px;color:#4a5578;line-height:1.5;margin-bottom:18px">Esta copia de la herramienta est&aacute; desactualizada. Recarga para ver los datos y cambios m&aacute;s recientes antes de seguir trabajando.</div>'
+      +'<button style="background:#0033A1;color:#fff;border:0;border-radius:9px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer">Recargar ahora</button></div>';
+    d.querySelector('button').onclick=function(){
+      var u=location.href.split('#')[0].split('?')[0];location.replace(u+'?v='+Date.now());
+    };
+    document.body.appendChild(d);
+  }
+  function revisar(forzar){
+    if(AVISADO||!LOCAL||location.protocol==='file:')return;
+    var ahora=Date.now();if(!forzar&&ahora-ULT<10*60*1000)return;ULT=ahora;
+    var u=location.href.split('#')[0].split('?')[0];
+    fetch(u+'?chk='+ahora,{cache:'no-store'}).then(function(r){return r.ok?r.text():null;}).then(function(t){
+      if(!t)return;
+      var remoto=codigoDe(new DOMParser().parseFromString(t,'text/html'));
+      if(remoto&&remoto!==LOCAL)aviso();
+    }).catch(function(){});
+  }
+  setTimeout(function(){revisar(true);},1500);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')revisar(false);});
+  setInterval(function(){revisar(false);},10*60*1000);
+})();
 </script>
 </body>
 </html>
