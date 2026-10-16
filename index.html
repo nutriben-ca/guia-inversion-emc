@@ -101,6 +101,10 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
 .mt-note{font-size:10.5px;color:#5a6480;line-height:1.55;margin-top:7px;}
 .new-tag{background:#0033A1;color:#fff;font-size:8.5px;font-weight:700;padding:1px 5px;border-radius:3px;letter-spacing:.03em;}
 .cw-rxp{width:52px;text-align:center;}
+.cw-cap{width:58px;text-align:center;}
+.cap-n{font-weight:700;font-size:11.5px;color:#0033A1;}
+.cap-n.dil{color:#b03020;}
+.cap-d{display:block;font-size:9px;color:#b03020;font-weight:500;line-height:1;}
 .cw-cal{width:58px;}
 .rxp-n{font-weight:700;font-size:11.5px;color:#0033A1;}
 .cal-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;}
@@ -236,7 +240,7 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
     <div class="mt-box mt-e"><span class="mt-h">Estrat&eacute;gicos &times;1</span><span class="mt-p">Sin Lactosa 1</span></div>
     <div class="mt-box mt-s"><span class="mt-h">Score 0&ndash;10</span><span class="mt-p">Rx capturable 65% &middot; Oportunidad 20% &middot; Analyzer 15% &middot; &times; credibilidad Close&nbsp;Up</span></div>
   </div>
-  <p class="mt-note"><strong>Rx pond.</strong> convierte los inicios a su equivalente en producto Ultra Core, as&iacute; que 20 inicios de Sin Lactosa pesan menos que 12 de Natal PRO-&alpha;. <strong>Cal.</strong> es qu&eacute; tanto de la prescripci&oacute;n cae en Ultra Core &mdash; 100% significa portafolio ideal, y por debajo de 60% hay conversi&oacute;n pendiente. <strong>Rx capturable</strong> divide el Rx ponderado entre 1 + el n&uacute;mero de lecheras de la competencia que patrocinan al m&eacute;dico. El Close Up ajusta el score si confirma o contradice lo declarado, y un m&eacute;dico en el 20% superior de Close Up de su pa&iacute;s no baja de Tier 2. Tiers por percentil dentro de cada pa&iacute;s. Los m&eacute;dicos <span class="new-tag">nuevo</span> son los encuestados desde septiembre.</p>
+  <p class="mt-note"><strong>Rx pond.</strong> convierte los inicios a su equivalente en producto Ultra Core, as&iacute; que 20 inicios de Sin Lactosa pesan menos que 12 de Natal PRO-&alpha;. <strong>Cal.</strong> es qu&eacute; tanto de la prescripci&oacute;n cae en Ultra Core &mdash; 100% significa portafolio ideal, y por debajo de 60% hay conversi&oacute;n pendiente. <strong>Rx capturable</strong> (columna <em>Rx capt.</em>; en rojo cuando está diluido) divide el Rx ponderado entre 1 + el n&uacute;mero de lecheras de la competencia que patrocinan al m&eacute;dico. El Close Up ajusta el score si confirma o contradice lo declarado, y un m&eacute;dico en el 20% superior de Close Up de su pa&iacute;s no baja de Tier 2. Tiers por percentil dentro de cada pa&iacute;s. Los m&eacute;dicos <span class="new-tag">nuevo</span> son los encuestados desde septiembre.</p>
 </div>
 
 <div class="tabs">
@@ -271,6 +275,7 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
         <th class="cw-esp" onclick="sort('A','esp')">Especialidad ↕</th>
         <th class="cw-rx" onclick="sort('A','rx')">Rx/sem ↕</th>
         <th class="cw-rxp" onclick="sort('A','rxp')">Rx pond. ↕</th>
+        <th class="cw-cap" onclick="sort('A','rx_cap')" title="Rx capturable = Rx pond. ÷ (1 + lecheras de la competencia que lo patrocinan)">Rx capt. ↕</th>
         <th class="cw-cal" onclick="sort('A','calidad')">Cal. ↕</th>
         <th class="cw-f">E1</th><th class="cw-f">E3</th><th class="cw-f">HE</th><th class="cw-f">HP</th><th class="cw-f">SL</th>
         <th class="cw-anl" onclick="sort('A','anl')">Anl ↕</th>
@@ -307,6 +312,7 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
         <th class="cw-esp" onclick="sort('B1','esp')">Especialidad ↕</th>
         <th class="cw-rx" onclick="sort('B1','rx')">Rx/sem ↕</th>
         <th class="cw-rxp" onclick="sort('B1','rxp')">Rx pond. ↕</th>
+        <th class="cw-cap" onclick="sort('B1','rx_cap')" title="Rx capturable = Rx pond. ÷ (1 + lecheras de la competencia que lo patrocinan)">Rx capt. ↕</th>
         <th class="cw-cal" onclick="sort('B1','calidad')">Cal. ↕</th>
         <th class="cw-f">E1</th><th class="cw-f">E3</th><th class="cw-f">HE</th><th class="cw-f">HP</th><th class="cw-f">SL</th>
         <th class="cw-anl" onclick="sort('B1','anl')">Anl ↕</th>
@@ -343,6 +349,7 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
         <th class="cw-esp" onclick="sort('B2','esp')">Especialidad ↕</th>
         <th class="cw-rx" onclick="sort('B2','rx')">Rx/sem ↕</th>
         <th class="cw-rxp" onclick="sort('B2','rxp')">Rx pond. ↕</th>
+        <th class="cw-cap" onclick="sort('B2','rx_cap')" title="Rx capturable = Rx pond. ÷ (1 + lecheras de la competencia que lo patrocinan)">Rx capt. ↕</th>
         <th class="cw-cal" onclick="sort('B2','calidad')">Cal. ↕</th>
         <th class="cw-f">E1</th><th class="cw-f">E3</th><th class="cw-f">HE</th><th class="cw-f">HP</th><th class="cw-f">SL</th>
         <th class="cw-anl" onclick="sort('B2','anl')">Anl ↕</th>
@@ -379,6 +386,7 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
         <th class="cw-esp" onclick="sort('C','esp')">Especialidad ↕</th>
         <th class="cw-rx" onclick="sort('C','rx')">Rx/sem ↕</th>
         <th class="cw-rxp" onclick="sort('C','rxp')">Rx pond. ↕</th>
+        <th class="cw-cap" onclick="sort('C','rx_cap')" title="Rx capturable = Rx pond. ÷ (1 + lecheras de la competencia que lo patrocinan)">Rx capt. ↕</th>
         <th class="cw-cal" onclick="sort('C','calidad')">Cal. ↕</th>
         <th class="cw-f">E1</th><th class="cw-f">E3</th><th class="cw-f">HE</th><th class="cw-f">HP</th><th class="cw-f">SL</th>
         <th class="cw-anl" onclick="sort('C','anl')">Anl ↕</th>
@@ -475,6 +483,7 @@ var MR_ALIAS={'osman abraham':'Osman Carbajal','osman':'Osman Carbajal'};
   var oficiales=SV_MR.concat(HN_MR),idx={};
   oficiales.forEach(function(m){idx[m.toLowerCase()]=m;});
   RAW.forEach(function(r){
+    r.rx_cap=Math.round(r.rx_ef/(1+nLecheras(r))*10)/10;
     var k=String(r.mr||'').replace(/[.]/g,' ').replace(/\s+/g,' ').trim().toLowerCase();
     if(idx[k])r.mr=idx[k];
     else if(MR_ALIAS[k])r.mr=MR_ALIAS[k];
@@ -600,6 +609,11 @@ function cuCell(r){
   return'<div class="cu-bar"><div class="cu-track"><div class="cu-fill" style="width:'+Math.min(sh,100)+'%;background:'+col+';"></div></div><span style="font-weight:500;color:'+col+';">'+sh.toFixed(0)+'%</span>'+nbBadge+'</div>';
 }
 
+function capCell(r){
+  var nl=nLecheras(r);
+  if(!nl)return'<td class="cw-cap" title="Sin lecheras de la competencia: todo su Rx es capturable"><span class="cap-n">'+r.rx_cap.toFixed(1)+'</span></td>';
+  return'<td class="cw-cap" title="'+r.rx_ef.toFixed(1)+' ÷ (1 + '+nl+' lechera'+(nl>1?'s':'')+')"><span class="cap-n dil">'+r.rx_cap.toFixed(1)+'</span><span class="cap-d">÷'+(1+nl)+'</span></td>';
+}
 function buildRow(r,showEMC){
   var anlH=r.anl!==null&&r.anl!==undefined?'<span class="'+anlCls(r.anl)+'">'+r.anl+'</span>':'<span style="color:#ccc;">—</span>';
   var nbH=r.nb_pat>0?'<span class="nb-star">★'+r.nb_pat+'</span>':'<span style="color:#ddd;">—</span>';
@@ -614,6 +628,7 @@ function buildRow(r,showEMC){
     +'<td class="cw-esp" style="font-size:10.5px;" title="'+r.esp+'">'+r.esp+'</td>'
     +'<td class="cw-rx" style="font-weight:600;text-align:center;">'+r.rx+'</td>'
     +'<td class="cw-rxp"><span class="rxp-n">'+r.rx_ef.toFixed(1)+'</span></td>'
+    +capCell(r)
     +'<td class="cw-cal">'+calCell(r)+'</td>'
     +'<td class="cw-f">'+fc(r.e1,'fe1')+'</td><td class="cw-f">'+fc(r.e3,'fe3')+'</td>'
     +'<td class="cw-f">'+fc(r.hidext,'fhe')+'</td><td class="cw-f">'+fc(r.hidparc,'fhp')+'</td>'
@@ -672,10 +687,10 @@ function downloadExcel(seg){
   var d=getFiltered(seg);
   var showEMC=seg!=='C';
   var patFull={'Terreno virgen':'Terreno virgen','Abandono temprano':'Abandono temprano — solo 2024','Abandono reciente':'Abandono reciente — 24/25, ventana 2026','Patrón intermitente':'Patrón intermitente','Activo reciente':'Activo reciente — solo 2026','Lealtad fraccionada':'Lealtad fraccionada — varios labs 3 años','Lealtad consolidada':'Lealtad consolidada — misma marca 3 años'};
-  var headers=['Médico','MR','País','Especialidad','Segmento','Rx/sem','Rx ponderado','Rx pond. equiv.','Calidad mezcla %','E1 (Natal ×5)','E3 (Crecim. ×3)','Hid.Ext (Arroz ×5)','Hid.Parc (Confort ×5)','S/Lac (×1)','Médico nuevo','Analyzer','Patrón competitivo','Marcas comp.','Patrocinios NB','CU Rx total','CU NB Rx','CU Share%','CU Quintil','Score','Tier'];
+  var headers=['Médico','MR','País','Especialidad','Segmento','Rx/sem','Rx ponderado','Rx pond. equiv.','Rx capturable','Lecheras comp.','Calidad mezcla %','E1 (Natal ×5)','E3 (Crecim. ×3)','Hid.Ext (Arroz ×5)','Hid.Parc (Confort ×5)','S/Lac (×1)','Médico nuevo','Analyzer','Patrón competitivo','Marcas comp.','Patrocinios NB','CU Rx total','CU NB Rx','CU Share%','CU Quintil','Score','Tier'];
   if(showEMC)headers.push('Tipo EMC');
   var rows=d.map(function(r){
-    var row=[r.n,r.mr,r.pais,r.esp,r.seg,r.rx,r.rxp,r.rx_ef,r.calidad,r.e1,r.e3,r.hidext,r.hidparc,r.sl,(r.nuevo?'Sí':''),
+    var row=[r.n,r.mr,r.pais,r.esp,r.seg,r.rx,r.rxp,r.rx_ef,r.rx_cap,nLecheras(r),r.calidad,r.e1,r.e3,r.hidext,r.hidparc,r.sl,(r.nuevo?'Sí':''),
       r.anl!==null?r.anl:'',patFull[r.patron]||r.patron,r.marcas,r.nb_pat,
       r.cu_tam!==null?r.cu_tam:'',r.cu_nb!==null?r.cu_nb:'',
       r.cu_share!==null?r.cu_share:'',r.cu_q!==null?r.cu_q:'',r.score,r.tier];
@@ -684,7 +699,7 @@ function downloadExcel(seg){
   });
   var segNames={A:'Extranjero',B1:'Customizada+',B2:'Local+',C:'Local'};
   var ws=XLSX.utils.aoa_to_sheet([headers].concat(rows));
-  ws['!cols']=[{wch:28},{wch:18},{wch:12},{wch:22},{wch:5},{wch:6},{wch:13},{wch:15},{wch:15},{wch:14},{wch:14},{wch:17},{wch:19},{wch:10},{wch:12},{wch:4},{wch:4},{wch:7},{wch:7},{wch:5},{wch:7},{wch:42},{wch:28},{wch:12},{wch:10},{wch:8},{wch:9},{wch:8},{wch:7},{wch:25},{wch:25}];
+  ws['!cols']=[{wch:28},{wch:18},{wch:12},{wch:22},{wch:5},{wch:6},{wch:13},{wch:15},{wch:13},{wch:13},{wch:15},{wch:14},{wch:14},{wch:17},{wch:19},{wch:10},{wch:12},{wch:4},{wch:4},{wch:7},{wch:7},{wch:5},{wch:7},{wch:42},{wch:28},{wch:12},{wch:10},{wch:8},{wch:9},{wch:8},{wch:7},{wch:25},{wch:25}];
   var wb2=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb2,ws,'Seg '+seg+' '+segNames[seg]);
   var sumSheet=[['Nutriben CA — Guía Inversión EMC'],['Generado: '+new Date().toLocaleDateString('es-HN')],
@@ -952,12 +967,12 @@ function renderGrp(){
   });
   h+='<div class="g-box"><h3>Mezcla de inicios por categoría</h3><div class="g-mix">'+bar+'</div><div class="g-leg">'+leg+'</div></div>';
   h+='<div class="g-two"><div class="g-box"><h3>Por ciudad</h3><div class="g-chips">'+chips(s.ciu)+'</div></div><div class="g-box"><h3>Por MR</h3><div class="g-chips">'+chips(s.mr)+'</div></div></div>';
-  h+='<div class="g-wrap"><table class="g-tbl"><thead><tr><th>#</th><th>Médico</th><th>MR</th><th>Ciudad</th><th>Especialidad</th><th class="c">Seg.</th><th class="c">Tier</th><th class="c">Rx/sem</th><th class="c">Rx pond.</th><th class="c">E1</th><th class="c">E3</th><th class="c">HE</th><th class="c">HP</th><th class="c">SL</th><th>Patrón</th><th class="c">Score</th><th></th></tr></thead><tbody>';
+  h+='<div class="g-wrap"><table class="g-tbl"><thead><tr><th>#</th><th>Médico</th><th>MR</th><th>Ciudad</th><th>Especialidad</th><th class="c">Seg.</th><th class="c">Tier</th><th class="c">Rx/sem</th><th class="c">Rx pond.</th><th class="c">Rx capt.</th><th class="c">E1</th><th class="c">E3</th><th class="c">HE</th><th class="c">HP</th><th class="c">SL</th><th>Patrón</th><th class="c">Score</th><th></th></tr></thead><tbody>';
   L.forEach(function(r,i){
     h+='<tr><td style="color:#6b7a96">'+(i+1)+'</td><td class="nm"><b>'+r.n+'</b>'+((r.cu_nb&&r.cu_nb>0)?' <span class="name-nb">★ NB</span>':'')+(r.nuevo?' <span class="new-tag">nuevo</span>':'')+'</td>'
      +'<td style="color:#3F58A7">'+r.mr+'</td><td>'+(r.ciudad||'—')+'</td><td>'+r.esp+'</td><td class="c">'+r.seg+'</td>'
      +'<td class="c"><span class="g-tier" style="background:'+tierColor(r.tier)+'">'+r.tier.replace('TIER ','T')+'</span></td>'
-     +'<td class="c"><b>'+r.rx+'</b></td><td class="c">'+r.rx_ef.toFixed(1)+'</td>'
+     +'<td class="c"><b>'+r.rx+'</b></td><td class="c">'+r.rx_ef.toFixed(1)+'</td><td class="c"><b style="color:'+(nLecheras(r)?'#b03020':'#0033A1')+'">'+r.rx_cap.toFixed(1)+'</b></td>'
      +'<td class="c">'+(r.e1||'·')+'</td><td class="c">'+(r.e3||'·')+'</td><td class="c">'+(r.hidext||'·')+'</td><td class="c">'+(r.hidparc||'·')+'</td><td class="c">'+(r.sl||'·')+'</td>'
      +'<td>'+(patLabel[r.patron]||r.patron)+'</td><td class="c"><b style="color:'+tierColor(r.tier)+'">'+r.score.toFixed(1)+'</b></td>'
      +'<td><button class="g-x" title="Quitar del grupo" onclick="removeGrp('+r._i+')">✕</button></td></tr>';
