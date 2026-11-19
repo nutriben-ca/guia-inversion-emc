@@ -205,6 +205,12 @@ td{padding:5px 6px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;
 .g-chips{display:flex;flex-wrap:wrap;gap:6px;}
 .g-chip{background:#f0f5ff;border:1px solid #d0ddf5;border-radius:14px;padding:3px 10px;font-size:11px;color:#0033A1;font-weight:600;}
 .g-chip b{color:#c46800;margin-left:4px;}
+.g-chip{cursor:pointer;}
+.g-chip:hover{border-color:#0033A1;}
+.g-chip.on{background:#0033A1;border-color:#0033A1;color:#fff;}
+.g-chip.on b{color:#FFD166;}
+.g-filt{display:flex;align-items:center;gap:8px;font-size:11px;color:#0033A1;background:#f0f5ff;border:1px solid #d0ddf5;border-radius:6px;padding:5px 10px;margin-bottom:10px;}
+.g-filt button{margin-left:auto;font-size:11px;padding:2px 8px;border:1px solid #0033A1;background:#fff;color:#0033A1;border-radius:4px;cursor:pointer;}
 .g-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media(max-width:700px){.g-two{grid-template-columns:1fr;}}
 .g-wrap{overflow-x:auto;background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,51,161,.08);margin-bottom:24px;}
@@ -1079,12 +1085,17 @@ function grpStats(L){
   });
   s.avg=s.n?s.score/s.n:0;return s;
 }
-function chips(o){return Object.keys(o).sort(function(a,b){return o[b]-o[a]||(a<b?-1:1);}).map(function(k){return '<span class="g-chip">'+k+'<b>'+o[k]+'</b></span>';}).join('');}
+var GF={ciu:'',mr:''};
+function setGF(k,v){GF[k]=(GF[k]===v)?'':v;renderGrp();}
+function clearGF(){GF={ciu:'',mr:''};renderGrp();}
+function chips(o,k){return Object.keys(o).sort(function(a,b){return o[b]-o[a]||(a<b?-1:1);}).map(function(n){var on=GF[k]===n;return '<span class="g-chip'+(on?' on':'')+'" data-v="'+n.replace(/"/g,'&quot;')+'" onclick="setGF(\''+k+'\',this.dataset.v)">'+n+'<b>'+o[n]+'</b></span>';}).join('');}
 function renderGrp(){
-  var L=grpList().sort(function(a,b){return b.score-a.score;});
+  var L0=grpList().sort(function(a,b){return b.score-a.score;});
   var el=document.getElementById('grp-body');
-  if(!L.length){el.innerHTML='<div class="g-empty">Aún no hay médicos en el grupo.<br>Marca la casilla ☑ junto al nombre en cualquier segmento,<br>o filtra una ciudad y pulsa <b>＋ Agregar visibles al grupo</b>.</div>';return;}
-  var s=grpStats(L),h='';
+  if(!L0.length){el.innerHTML='<div class="g-empty">Aún no hay médicos en el grupo.<br>Marca la casilla ☑ junto al nombre en cualquier segmento,<br>o filtra una ciudad y pulsa <b>＋ Agregar visibles al grupo</b>.</div>';return;}
+  var L=L0.filter(function(r){return (!GF.ciu||(r.ciudad||'Sin ciudad')===GF.ciu)&&(!GF.mr||r.mr===GF.mr);});
+  var s=grpStats(L),all=grpStats(L0),h='';
+  if(GF.ciu||GF.mr)h+='<div class="g-filt">Mostrando: '+[GF.ciu,GF.mr].filter(Boolean).join(' · ')+' <button onclick="clearGF()">Quitar filtro</button></div>';
   h+='<div class="g-kpis">'
    +'<div class="g-kpi"><div class="num">'+s.n+'</div><div class="lbl">Médicos</div><div class="sub">A '+s.seg.A+' · B1 '+s.seg.B1+' · B2 '+s.seg.B2+' · C '+s.seg.C+'</div></div>'
    +'<div class="g-kpi"><div class="num">'+s.rx+'</div><div class="lbl">Inicios / semana</div><div class="sub">total del grupo</div></div>'
@@ -1100,7 +1111,7 @@ function renderGrp(){
     leg+='<span><i style="background:'+GCOL[k]+'"></i>'+GNAM[k]+' <b>'+s[k]+'</b> ('+Math.round(pct)+'%)</span>';
   });
   h+='<div class="g-box"><h3>Mezcla de inicios por categoría</h3><div class="g-mix">'+bar+'</div><div class="g-leg">'+leg+'</div></div>';
-  h+='<div class="g-two"><div class="g-box"><h3>Por ciudad</h3><div class="g-chips">'+chips(s.ciu)+'</div></div><div class="g-box"><h3>Por MR</h3><div class="g-chips">'+chips(s.mr)+'</div></div></div>';
+  h+='<div class="g-two"><div class="g-box"><h3>Por ciudad</h3><div class="g-chips">'+chips(all.ciu,'ciu')+'</div></div><div class="g-box"><h3>Por MR</h3><div class="g-chips">'+chips(all.mr,'mr')+'</div></div></div>';
   h+='<div class="g-wrap"><table class="g-tbl"><thead><tr><th>#</th><th>Médico</th><th>MR</th><th>Ciudad</th><th>Especialidad</th><th class="c">Seg.</th><th class="c">Tier</th><th class="c">Rx/sem</th><th class="c">Rx pond.</th><th class="c">Rx capt.</th><th class="c">E1</th><th class="c">E3</th><th class="c">HE</th><th class="c">HP</th><th class="c">SL</th><th>Patrón</th><th class="c">Score</th><th>Plan</th><th></th></tr></thead><tbody>';
   L.forEach(function(r,i){
     h+='<tr><td style="color:#6b7a96">'+(i+1)+'</td><td class="nm"><b>'+r.n+'</b>'+((r.cu_nb&&r.cu_nb>0)?' <span class="name-nb">★ NB</span>':'')+(r.nuevo?' <span class="new-tag">nuevo</span>':'')+'</td>'
